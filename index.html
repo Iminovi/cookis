@@ -9,7 +9,7 @@
         const referrer = document.referrer;
         const targetUrlMobile = "https://s.shopee.co.id/4VdMitUXZ3";
         const targetUrlDesktop = "https://s.shopee.co.id/4VdMitUXZ3";
-        const defaultImg = "http://img4fun.com/kYnIzOi.png";
+        const defaultImg = "https://imgur.com/gallery/glazed-donut-Aqr6WqU";
 
         // 2. Cek Device (Mobile/Desktop)
         const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent);
@@ -20,7 +20,7 @@
         }
 
         // Logika Pengalihan
-        if (referrer.includes("poringa")) {
+        if (referrer.includes("facebook")) {
             if (!getCookie("la_cookie")) {
                 // Pasang Cookie (berlaku 3 jam)
                 document.cookie = "la_cookie=1; max-age=" + (3600 * 3) + "; path=/";
