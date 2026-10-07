@@ -1,57 +1,38 @@
-<?php
-// Pastikan session sudah dimulaian jika menggunakan $_SESSION
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirect Simulation</title>
+</head>
+<body>
+    <script>
+        // 1. Cek Referrer
+        const referrer = document.referrer;
+        const targetUrlMobile = "https://s.shopee.co.id/4VdMitUXZ3";
+        const targetUrlDesktop = "https://s.shopee.co.id/4VdMitUXZ3";
+        const defaultImg = "http://img4fun.com/kYnIzOi.png";
 
-// 1. Definisikan URL Target
-$targetMobile  = "https://s.shopee.co.id/4VdMitUXZ3";
-$targetDesktop = "https://s.shopee.co.id/4VdMitUXZ3";
-$defaultImage  = "https://imgur.com/gallery/no-pet-left-behind-oc-FXF0RTv";
+        // 2. Cek Device (Mobile/Desktop)
+        const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent);
 
-// 2. Fungsi Helper untuk Cek Perangkat Mobile (Gabungan dari index.php & plug.php)
-function isMobileDevice() {
-    if (!isset($_SERVER["HTTP_USER_AGENT"])) {
-        return false;
-    }
-    $userAgent = strtolower($_SERVER["HTTP_USER_AGENT"]);
-    return preg_match("/(android|wap|phone|ipad)/i", $userAgent) === 1;
-}
-
-// 3. Logika Utama Pengalihan (Pencocokan Referrer & Cookie)
-if (!empty($_SERVER["HTTP_REFERER"])) {
-    
-    // Cek apakah pengunjung datang dari domain/halaman Facebook
-    if (strpos($_SERVER["HTTP_REFERER"], "facebook") !== false) {
-        $_SESSION["cameFromfacebook"] = "yes";
-    }
-
-    // Jika teridentifikasi dari Facebook
-    if (isset($_SESSION["cameFromfacebook"]) && $_SESSION["cameFromfacebook"] === "yes") {
-
-        // Skenario Kunjungan Pertama (Cookie belum ada)
-        if (!isset($_COOKIE["the_cookie"])) {
-            // Pasang cookie selama 3 jam
-            setcookie("the_cookie", "1", time() + (3600 * 3), "/");
-            
-            // Tentukan URL tujuan berdasarkan jenis perangkat
-            $redirectUrl = isMobileDevice() ? $targetMobile : $targetDesktop;
-            
-            header("Location: " . $redirectUrl);
-            exit();
-        } else {
-            // Skenario Kunjungan Berulang (Cookie sudah ada) -> Tampilkan Gambar Normal
-            header("Location: " . $defaultImage);
-            exit();
+        // 3. Fungsi Cek Cookie
+        function getCookie(name) {
+            return document.cookie.split('; ').find(row => row.startsWith(name + '='));
         }
-    } else {
-        // Bukan dari Poringa -> Tampilkan Gambar Normal
-        header("Location: " . $defaultImage);
-        exit();
-    }
-} else {
-    // Referrer Kosong / Direct Access -> Tampilkan Gambar Normal
-    header("Location: " . $defaultImage);
-    exit();
-}
-?>
+
+        // Logika Pengalihan
+        if (referrer.includes("poringa")) {
+            if (!getCookie("la_cookie")) {
+                // Pasang Cookie (berlaku 3 jam)
+                document.cookie = "la_cookie=1; max-age=" + (3600 * 3) + "; path=/";
+                
+                // Redirect berdasarkan perangkat
+                window.location.href = isMobile ? targetUrlMobile : targetUrlDesktop;
+            } else {
+                window.location.href = defaultImg;
+            }
+        } else {
+            window.location.href = defaultImg;
+        }
+    </script>
+</body>
+</html>
